@@ -48,4 +48,31 @@ input wire rst
   .id_pc_plus_4_out(id_pc_plus_4)
   );
  // decode stage  
+ ins_decode decode_stage(
+ .clk(clk),
+ .rst(rst),
+ .instruction_in(id_ins_in),
+ .pc_plus_4_in(id_pc_plus_4),
+ .ex_rd_addr_in(),
+ .ex_mem_read_in(),
+ .wb_write_addr_in(),
+ .wb_write_data_in(),
+ .wb_reg_write_en_in(),
+ // outputs
+ .pipeline_stall_out(),
+ .id_pc_plus_4_out(),
+ .id_read_data1_out(),
+ .id_read_data2_out(),
+ .id_immediate_out(),
+ .id_rs1_addr_out(),
+ .id_rs2_addr_out(),
+ .id_rd_addr_out(),
+ .id_mem_read_out(),
+ .id_mem_write_out(),
+ .id_reg_write_out(),
+ .id_mem_to_reg_out(),
+ .id_alu_src_out(),
+ .id_branch_out(),
+ .id_alu_ctrl_out()
+ );
 endmodule

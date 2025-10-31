@@ -15,7 +15,6 @@ module imm_gen (
     localparam OPCODE_U_AUIPC = 7'b0010111; // (auipc)
     localparam OPCODE_J       = 7'b1101111; // (jal)
     localparam OPCODE_R       = 7'b0110011; // (add, sub, etc.) - No immediate
-    // * makes it run all the time
     always @(*) begin
         case (opcode)
             // I-Type (Sign-extend from bit 11) 
