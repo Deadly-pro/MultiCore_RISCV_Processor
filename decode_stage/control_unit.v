@@ -11,7 +11,8 @@ module control_unit (
     output reg         MemToReg,
     output reg         ALUSrc,     // 0 -> reg2, 1 -> immediate
     output reg         Branch,     // generic branch indicator (beq/bne/blt/...)
-    output reg  [3:0]  ALUCtrl     // ALU operation code
+    output reg  [3:0]  ALUCtrl,     // ALU operation code
+    output reg         WriteFromPC
 );
 
     // --- opcode / funct fields ---
@@ -54,7 +55,7 @@ module control_unit (
         ALUSrc   = 1'b0;
         Branch   = 1'b0;
         ALUCtrl  = ALU_NOP;
-
+        WriteFromPC=1'b0;
         case (opcode)
             // ---------------- R-type (register-register) ----------------
             OP_RTYPE: begin
@@ -141,6 +142,7 @@ module control_unit (
                 ALUSrc   = 1'b0;
                 Branch   = 1'b0;
                 ALUCtrl  = ALU_ADD; // not used for jump target writeback, keep ADD
+                WriteFromPC=1'b1;
             end
 
             // ---------------- JALR ----------------
@@ -152,6 +154,7 @@ module control_unit (
                 ALUSrc   = 1'b1; // target = rs1 + imm
                 Branch   = 1'b0;
                 ALUCtrl  = ALU_ADD; // used to compute target
+                WriteFromPC=1'b1;
             end
 
             // ---------------- LUI ----------------

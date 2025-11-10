@@ -3,7 +3,7 @@
 // module which will load the instrcutions required for the core its a prt of 
 module ins_memory #(
 parameter MEM_SIZE=1024, // 1024 word memeory for one core 
-parameter TEMP_PROG="program.txt"// temporary .txt file to test single core 
+parameter PROGRAM_FILE="program.txt"// temporary .txt file to test single core 
 )
 ( input wire [31:0] addr,
   output wire [31:0] ins_out );
@@ -11,8 +11,8 @@ parameter TEMP_PROG="program.txt"// temporary .txt file to test single core
 reg [31:0] memory[0:MEM_SIZE-1];
 // for testing of single stage cpu with .txt file load the memeory with the machine code from .txt file
 initial begin
-    $display("Loading ins Memory from: %s",TEMP_PROG);
-    $readmemh(TEMP_PROG,memory);
+    $display("Loading ins Memory from: %s",PROGRAM_FILE);
+    $readmemh(PROGRAM_FILE,memory);
     end
  // now to provide the fetched instruction back to the output
  assign ins_out = memory[addr[11:2]];
