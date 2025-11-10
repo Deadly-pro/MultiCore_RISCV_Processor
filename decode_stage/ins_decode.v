@@ -3,7 +3,7 @@ module ins_decode(
     input  wire        rst,
     
     // --- Inputs from IF/ID Register ---
-    input  wire [31:0] instruction_in,
+    input  wire [31:0] ins_in,
     input  wire [31:0] pc_plus_4_in,
 
     // --- Inputs from EX Stage (for Hazard Unit) ---
@@ -38,9 +38,9 @@ module ins_decode(
 );
 
     // --- Instruction Field Wires ---
-    assign id_rs1_addr_out = instruction_in[19:15];
-    assign id_rs2_addr_out = instruction_in[24:20];
-    assign id_rd_addr_out  = instruction_in[11:7];
+    assign id_rs1_addr_out = ins_in[19:15];
+    assign id_rs2_addr_out = ins_in[24:20];
+    assign id_rd_addr_out  = ins_in[11:7];
 
     // Pass-through PC+4 (it's needed for JAL/JALR writeback)
     assign id_pc_plus_4_out = pc_plus_4_in;
@@ -63,13 +63,13 @@ module ins_decode(
 
     // --- Immediate Generator (imm_gen.v) ---
     imm_gen im (
-        .instruction(instruction_in),
+        .instruction(ins_in),
         .immediate_out(id_immediate_out) // Output to ID/EX
     );
 
     // --- Control Unit (control_unit.v) ---
     control_unit cu (
-        .instr(instruction_in),
+        .instr(ins_in),
         
         // Connect control outputs directly to the stage outputs
         .RegWrite(id_reg_write_out),

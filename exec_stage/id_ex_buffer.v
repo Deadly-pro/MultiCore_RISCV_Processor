@@ -21,6 +21,9 @@ module id_ex_buffer(
     input  wire        id_ALUSrc_in,     // 0 -> reg2, 1 -> immediate
     input  wire        id_Branch_in,     // generic branch indicator
     input  wire [3:0]  id_ALUCtrl_in,    // ALU operation code
+    
+    // --- THIS IS THE MISSING INPUT ---
+    input  wire [31:0] id_instruction_in, // For debugging
 
     // --- Outputs to EX Stage ---
     output reg  [31:0] ex_pc_plus_4_out,
@@ -38,7 +41,10 @@ module id_ex_buffer(
     output reg         ex_MemToReg_out,
     output reg         ex_ALUSrc_out,
     output reg         ex_Branch_out,
-    output reg  [3:0]  ex_ALUCtrl_out
+    output reg  [3:0]  ex_ALUCtrl_out,
+    
+    // --- THIS IS THE MISSING OUTPUT ---
+    output reg [31:0]  ex_instruction_out // For debugging
 );
 
     always @(posedge clk or posedge rst) begin
@@ -58,8 +64,35 @@ module id_ex_buffer(
             ex_ALUSrc_out     <= 1'b0;
             ex_Branch_out     <= 1'b0;
             ex_ALUCtrl_out    <= 4'b0000;
+            
+            // Reset the new debug port to a NOP
+            ex_instruction_out <= 32'h00000013; 
+            
         end else if (pipeline_stall) begin
             // Hold current outputs (stall): do nothing so registers keep previous value
+            
+            // --- NEW BUBBLE LOGIC ---
+            // On a stall, we must insert a NOP ("bubble") into the *next* stage.
+            // All control signals are set to 0.
+            ex_pc_plus_4_out  <= 32'b0;
+            ex_read_data1_out <= 32'b0;
+            ex_read_data2_out <= 32'b0;
+            ex_immediate_out  <= 32'b0;
+            ex_rs1_addr_out   <= 5'b0;
+            ex_rs2_addr_out   <= 5'b0;
+            ex_rd_addr_out    <= 5'b0;
+
+            ex_mem_read_out   <= 1'b0;
+            ex_mem_write_out  <= 1'b0;
+            ex_reg_write_out  <= 1'b0;
+            ex_MemToReg_out   <= 1'b0;
+            ex_ALUSrc_out     <= 1'b0;
+            ex_Branch_out     <= 1'b0;
+            ex_ALUCtrl_out    <= 4'hF; // NOP
+            
+            // Set instruction to NOP
+            ex_instruction_out <= 32'h00000013; 
+            
         end else begin
             // Normal: capture inputs from ID stage
             ex_pc_plus_4_out  <= id_pc_plus_4_in;
@@ -77,6 +110,9 @@ module id_ex_buffer(
             ex_ALUSrc_out     <= id_ALUSrc_in;
             ex_Branch_out     <= id_Branch_in;
             ex_ALUCtrl_out    <= id_ALUCtrl_in;
+            
+            // Latch the new debug port
+            ex_instruction_out <= id_instruction_in;
         end
     end
 
