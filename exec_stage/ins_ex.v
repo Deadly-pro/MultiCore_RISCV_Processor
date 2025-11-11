@@ -25,7 +25,7 @@ module ins_ex (
     input  wire        id_mem_read_in,
     input  wire        id_mem_write_in,
     input  wire        id_reg_write_in,
-    input  wire [1:0]  id_mem_to_reg_in, // <-- This is [1:0]
+    input  wire        id_mem_to_reg_in, // <-- This is [1:0]
     input  wire        id_branch_in,
     input  wire        id_alu_src_in,
     input  wire [3:0]  id_alu_ctrl_in,
@@ -38,7 +38,7 @@ module ins_ex (
     output reg         ex_mem_read_out,
     output reg         ex_mem_write_out,
     output reg         ex_reg_write_out,
-    output reg  [1:0]  ex_mem_to_reg_out, // <-- This is [1:0]
+    output reg         ex_mem_to_reg_out, // <-- This is [1:0]
 
     // --- Branch Outputs (to PC control) ---
     output reg         ex_branch_taken_out,

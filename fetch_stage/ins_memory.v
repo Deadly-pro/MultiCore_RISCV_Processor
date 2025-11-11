@@ -1,22 +1,37 @@
-// this module will fetch the required instructions per core of the cpu
-// in the simulation we will be reading from the .txt file from which we will seperate the work load back to this 
-// module which will load the instrcutions required for the core its a prt of 
+`timescale 1ns / 1ps
+//
+// ins_memory
+//
 module ins_memory #(
-parameter MEM_SIZE=1024, // 1024 word memeory for one core 
-parameter PROGRAM_FILE="program.txt"// temporary .txt file to test single core 
+    parameter MEM_SIZE=1024, 
+    parameter PROGRAM_FILE="program.txt"
 )
-( input wire [31:0] addr,
-  output wire [31:0] ins_out );
-// to make an array of registers for the instructions to be loaded onto
-reg [31:0] memory[0:MEM_SIZE-1];
-// for testing of single stage cpu with .txt file load the memeory with the machine code from .txt file
-initial begin
-    $display("Loading ins Memory from: %s",PROGRAM_FILE);
-    $readmemh(PROGRAM_FILE,memory);
+( 
+    input wire [31:0] addr,
+    output wire [31:0] ins_out 
+);
+
+    // Array of registers for the instructions
+    reg [31:0] memory[0:MEM_SIZE-1];
+    
+    // --- Pre-initialize the entire memory ---
+    integer i;
+    initial begin
+        // 1. First, set every word in memory to 0 (NOP)
+        for (i = 0; i < MEM_SIZE; i = i + 1) begin
+            memory[i] = 32'h00000000;
+        end
+        
+        // 2. Now, $readmemh will overwrite the first N lines
+        $display("Loading Ins Memory from: %s",PROGRAM_FILE);
+        
+        // --- FIX: Explicitly tell $readmemh to read from address 0 ---
+        // This is a more robust way to call it and should
+        // resolve the "Not enough words" warning.
+        $readmemh(PROGRAM_FILE, memory, 0); 
     end
- // now to provide the fetched instruction back to the output
- assign ins_out = memory[addr[11:2]];
- // 11:2 since the memory is word addressed and PC is byte addressed since
- // we only load one instruction and it has to be formatted to be a multiple of a 4 byte addr
- // we can slice the segment of the addr we need by this method 
+    
+    // Combinational read
+    assign ins_out = memory[addr[11:2]];
+
 endmodule

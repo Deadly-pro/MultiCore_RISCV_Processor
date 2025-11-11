@@ -3,9 +3,10 @@
 module multicore_tb;
     reg clk;
     reg rst;
+    
+    // This is the new filename for the waveform
+    localparam WAVEFORM_FILE = "waveform.vcd";
 
-    // Instantiate the entire multicore system
-    // Make sure your top-level file is named this!
     multicore_processor dut (
         .clk(clk),
         .rst(rst)
@@ -16,9 +17,20 @@ module multicore_tb;
         clk = 0;
         forever #5 clk = ~clk;
     end
-   integer core0_x3;
-   integer core1_x3;
-        
+    
+    integer core0_x3;
+    integer core1_x3;
+    integer ins_loaded;   
+    
+    // --- NEW: Waveform (VCD) Dumping ---
+    // This tells Icarus Verilog to record all the signals
+    // in your 'dut' and save them to the file defined above.
+    // Your old file was missing this block.
+    initial begin
+        $dumpfile(WAVEFORM_FILE);
+        $dumpvars(0, dut); // Dump all signals inside the 'dut'
+    end
+
     // Test Sequence
     initial begin
         
@@ -28,22 +40,27 @@ module multicore_tb;
         rst = 0;
         $display("T=20: Reset released.");
 
-        // Let it run for 15 cycles
-        #150;
+        // --- FIX: Run for 250ns ---
+        // Your old file ran for #150, which was too short.
+        #250; 
         
-        $display("T=170: Checking results...");
+        // --- FIX: Changed display to match the time ---
+        $display("T=270: Checking results..."); // 20ns + 250ns
         
         // --- Check Core 0's result ---
-        // Path: tb -> dut -> core0 -> decode_stage -> reg_file_inst -> registers
-        // NOTE: The instance names inside multicore_system.v must be core0, core1, etc.
-        core0_x3 = dut.core0.decode_stage.rf.registers[3]; // Assign value
+        // Path: tb -> dut -> core0 -> decode_stage -> rf -> registers
+        core0_x3 = dut.core0.decode_stage.rf.registers[3]; 
+        
+        $display("Checking Fetch...");
+        ins_loaded = dut.core0.if_id.id_instruction_out;
+        
         if (core0_x3 == 15)
             $display("Core 0 PASSED! (x3 = %d)", core0_x3);
         else
             $display("Core 0 FAILED! (x3 = %d, expected 15)", core0_x3);
 
         // --- Check Core 1's result ---
-        core1_x3 = dut.core1.decode_stage.rf.registers[3]; // Assign value
+        core1_x3 = dut.core1.decode_stage.rf.registers[3];
         if (core1_x3 == 27)
             $display("Core 1 PASSED! (x3 = %d)", core1_x3);
         else

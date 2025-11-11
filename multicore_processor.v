@@ -50,23 +50,23 @@ module multicore_processor(
     // --- 1. Instantiate Instruction Memories ---
     // ---------------------------------------------
     
-    ins_memory #( .PROGRAM_FILE("program0.txt") ) imem0 (
+    ins_memory #(.MEM_SIZE(1024), .PROGRAM_FILE("program0.txt") ) imem0 (
         .addr(core0_imem_addr),
         .ins_out(core0_imem_data)
     );
 
-    ins_memory #( .PROGRAM_FILE("program1.txt") ) imem1 (
+    ins_memory #(.MEM_SIZE(1024), .PROGRAM_FILE("program1.txt") ) imem1 (
         .addr(core1_imem_addr),
         .ins_out(core1_imem_data)
     );
     
     // (Using program0.txt for cores 2 and 3 for now)
-    ins_memory #( .PROGRAM_FILE("program2.txt") ) imem2 (
+    ins_memory #( .MEM_SIZE(1024),.PROGRAM_FILE("program2.txt") ) imem2 (
         .addr(core2_imem_addr),
         .ins_out(core2_imem_data)
     );
     
-    ins_memory #( .PROGRAM_FILE("program3.txt") ) imem3 (
+    ins_memory #(.MEM_SIZE(1024), .PROGRAM_FILE("program3.txt") ) imem3 (
         .addr(core3_imem_addr),
         .ins_out(core3_imem_data)
     );
