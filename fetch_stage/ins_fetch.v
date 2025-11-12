@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: fetch_stage/ins_fetch.v
+// Purpose: Instruction Fetch datapath: computes PC+4 and passes instruction in.
+// Notes:   IMEM is external; this stage is purely combinational.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // ins_fetch (for multi-core)

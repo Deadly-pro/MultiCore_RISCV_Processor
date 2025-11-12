@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/ins_ex.v
+// Purpose: Execute stage. Applies forwarding, selects ALU operands, computes
+//          ALU result and branch decision/target, and forwards control.
+// Notes:   Branch decision/target are registered to avoid multiple drivers.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // ins_ex (Execute Stage)

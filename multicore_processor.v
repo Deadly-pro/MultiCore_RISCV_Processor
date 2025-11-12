@@ -1,3 +1,15 @@
+// -----------------------------------------------------------------------------
+// File: multicore_processor.v
+// Purpose: Top-level multi-core RISC-V system.
+//          Instantiates 4 riscv_core instances, per-core instruction memories,
+//          and a 4-bank data memory (mem_controller).
+// Inputs:
+//   - clk: clock
+//   - rst: synchronous reset
+// Notes:
+//   - Each core loads its program from program0.txt..program3.txt via ins_memory.
+//   - This replaces riscv_core.v as the top-level.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // THIS IS THE NEW TOP-LEVEL DESIGN

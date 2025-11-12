@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/id_ex_buffer.v
+// Purpose: ID/EX pipeline register. Captures decoded operands and control.
+// Behavior: Inserts bubble (NOP) when pipeline_stall is asserted.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 // This register sits between ID and EX
 

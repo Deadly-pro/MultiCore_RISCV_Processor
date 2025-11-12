@@ -1,4 +1,9 @@
 
+// -----------------------------------------------------------------------------
+// File: decode_stage/imm_gen.v
+// Purpose: Generate sign/zero-extended immediates for RV32I instruction types.
+// Supports: I, S, B, U, J formats. R-type yields 0.
+// -----------------------------------------------------------------------------
 module imm_gen (
     input  wire [31:0] instruction,
     output reg  [31:0] immediate_out

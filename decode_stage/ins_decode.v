@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/ins_decode.v
+// Purpose: Instruction Decode stage.
+//          Reads register file, generates immediates, control signals, and
+//          performs basic hazard detection (stall on load-use).
+// Outputs: Signals and operands to ID/EX buffer; stall request to IF/ID.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 
 module ins_decode(

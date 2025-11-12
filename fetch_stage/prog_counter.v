@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------------
+// File: fetch_stage/prog_counter.v
+// Purpose: Program Counter register. Holds current PC; next PC is provided by
+//          control logic (branch vs PC+4) upstream.
+// Behavior: Synchronous update; resets to 0.
+// -----------------------------------------------------------------------------
 module prog_counter(
 input wire clk,
 input wire rst,

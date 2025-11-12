@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: riscv_core.v
+// Purpose: 5-stage pipelined RV32I core with hazard detection and forwarding.
+// Stages:  IF -> ID -> EX -> MEM -> WB, with IF/ID, ID/EX, EX/MEM, MEM/WB regs.
+// Memory:  External IMEM/DMEM interfaces; top-level wires these up.
+// Notes:   Includes forwarding_unit and simple hazard_unit (load-use stall).
+// -----------------------------------------------------------------------------
     `timescale 1ns / 1ps
     //
     // It contains the full 5-stage pipeline with FORWARDING.

@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/ex_ma.v
+// Purpose: EX/MEM pipeline register. Carries ALU result, rs2 data, rd, and
+//          control signals to the MEM stage.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 // This is the pipeline register between EX and MEM
 

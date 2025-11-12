@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: write_stage/ins_wb.v
+// Purpose: Write-back stage. Selects final write data to the reg file among
+//          ALU result, memory data, or PC+4 (JAL/JALR), and exposes feedback.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // ins_wb (Write Back Stage)

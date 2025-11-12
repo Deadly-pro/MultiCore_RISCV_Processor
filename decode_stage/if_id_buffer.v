@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/if_id_buffer.v
+// Purpose: IF/ID pipeline register. Holds fetched instruction and PC values.
+// Behavior: Resets to NOP. Holds state when pipeline_stall is asserted.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 // This register sits between IF and ID
 

@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/forward_mux.v
+// Purpose: 3-to-1 mux used by EX stage to select forwarded operand values.
+// Selects: 00=reg file, 01=MEM stage data, 10=WB stage data.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // This is a 3-to-1 MUX used for data forwarding.

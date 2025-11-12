@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/ex_alu_src_mux.v
+// Purpose: Select second ALU operand between rs2 and immediate based on ALUSrc.
+// -----------------------------------------------------------------------------
 module ALU_SRC_MUX (
     input  wire [31:0] rs2,
     input  wire [31:0] imm,

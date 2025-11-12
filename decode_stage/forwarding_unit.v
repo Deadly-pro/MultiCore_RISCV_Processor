@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/forwarding_unit.v
+// Purpose: Determine data hazards and select forwarding for EX stage operands.
+// Inputs:  ex_rs1/ex_rs2 (current EX), mem_rd/wb_rd with write enables.
+// Outputs: forward_a/forward_b selects for muxes in ins_ex.
+// Policy:  MEM hazard has priority over WB hazard. x0 is never forwarded.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 module forwarding_unit (
     // --- Inputs from EX Stage ---

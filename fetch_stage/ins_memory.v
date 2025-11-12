@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------------
+// File: fetch_stage/ins_memory.v
+// Purpose: Simple instruction memory (ROM) initialized via $readmemh.
+// Params:  MEM_SIZE (words), PROGRAM_FILE (hex file with 32-bit words).
+// Access:  Combinational read; address is word-indexed by [11:2].
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // ins_memory

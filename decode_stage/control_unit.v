@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/control_unit.v
+// Purpose: Combinational decode for RV32I subset -> generates control signals.
+// Inputs:  instr[31:0]
+// Outputs: RegWrite, MemRead, MemWrite, MemToReg, ALUSrc, Branch, ALUCtrl[3:0],
+//          WriteFromPC (for JAL/JALR)
+// -----------------------------------------------------------------------------
 // control_unit.v
 // Combinational control unit for a basic RV32I subset.
 // Inputs:  instruction[31:0]

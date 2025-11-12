@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/ex_alu.v
+// Purpose: Arithmetic Logic Unit. Operations selected by ALU_control (4-bit).
+// Matches encoding defined in control_unit.v.
+// -----------------------------------------------------------------------------
 module ALU (
     input  wire [31:0] A,
     input  wire [31:0] B,

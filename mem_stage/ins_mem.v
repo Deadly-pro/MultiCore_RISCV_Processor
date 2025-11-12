@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: mem_stage/ins_mem.v
+// Purpose: Memory stage. Issues DMEM read/write signals and registers data for
+//          MEM/WB. Passes through control for WB selection (MemToReg/WriteFromPC).
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 //
 // ins_mem (for multi-core)

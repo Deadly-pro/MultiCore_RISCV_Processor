@@ -1,4 +1,9 @@
 
+// -----------------------------------------------------------------------------
+// File: decode_stage/reg_file.v
+// Purpose: RV32I 32x32 register file with 2 read ports and 1 write port.
+// Behavior: x0 is hardwired to 0; writes to x0 are ignored. Sync reset.
+// -----------------------------------------------------------------------------
 module reg_file (
     input  wire        clk,
     input  wire        rst,

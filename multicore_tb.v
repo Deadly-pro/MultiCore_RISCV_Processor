@@ -1,3 +1,11 @@
+// -----------------------------------------------------------------------------
+// File: multicore_tb.v
+// Purpose: Testbench for the multicore_processor top.
+//          Generates clock/reset, dumps VCD, runs for a fixed time, and checks
+//          selected register results from core0/core1.
+// Outputs:
+//   - waveform.vcd: dump of the entire DUT for viewing in GTKWave.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 
 module multicore_tb;

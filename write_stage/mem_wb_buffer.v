@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// File: write_stage/mem_wb_buffer.v
+// Purpose: MEM/WB pipeline register. Holds data/control for final write-back.
+// -----------------------------------------------------------------------------
     `timescale 1ns / 1ps
     
     module mem_wb_buffer (

@@ -1,4 +1,10 @@
 
+// -----------------------------------------------------------------------------
+// File: memory/mem_controller.v
+// Purpose: 4-bank (per-core) data memory. Each core has its own 1KB word bank,
+//          avoiding contention. Reads are combinational; writes on clk edge.
+// Addressing: Byte addresses from cores; internally word-indexed by [11:2].
+// -----------------------------------------------------------------------------
 // This is a 4-Page main memory
 // It provides 4 independent ports, one for each core,
 // so there is no contention or need for a complex controller

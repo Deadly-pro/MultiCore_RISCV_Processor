@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------------
+// File: decode_stage/hazard_unit.v
+// Purpose: Detect load-use hazards and request a single-cycle stall.
+// Stall if: EX has a load to rd!=x0 and ID reads rs1 or rs2 equal to rd.
+// Outputs: pipeline_stall -> hold IF/ID and insert bubble into ID/EX.
+// -----------------------------------------------------------------------------
 module hazard_unit (
     // Inputs from ID Stage (current instruction)
     input  wire [4:0] id_rs1_addr,

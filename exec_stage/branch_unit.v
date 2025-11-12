@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// File: exec_stage/branch_unit.v
+// Purpose: Compute branch decision and target.
+// Current: Implements BEQ semantics (equal comparison). Target = PC + imm.
+// -----------------------------------------------------------------------------
 `timescale 1ns / 1ps
 
 module branch_logic (
