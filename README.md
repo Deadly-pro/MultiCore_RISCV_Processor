@@ -20,7 +20,10 @@ Using Make (recommended):
    - `make`
    - This compiles to `processor.vvp`, runs it with `vvp`, and opens `waveform.vcd` in GTKWave.
    - You should see PASS lines for each core showing independent programs:
-     - Core 0: x3=15, Core 1: x3=27, Core 2: x3=7, Core 3: x3=42
+     - Core 0: x3=15, 
+       Core 1: x3=27, 
+       Core 2: x3=7, 
+       Core 3: x3=42
 
 2. Clean artifacts
    - `make clean`
