@@ -28,6 +28,8 @@ module multicore_tb;
     
     integer core0_x3;
     integer core1_x3;
+    integer core2_x3;
+    integer core3_x3;
     integer ins_loaded;   
     
     // --- NEW: Waveform (VCD) Dumping ---
@@ -48,12 +50,10 @@ module multicore_tb;
         rst = 0;
         $display("T=20: Reset released.");
 
-        // --- FIX: Run for 250ns ---
-        // Your old file ran for #150, which was too short.
+        // --- Run long enough for all cores to complete simple programs ---
         #250; 
         
-        // --- FIX: Changed display to match the time ---
-        $display("T=270: Checking results..."); // 20ns + 250ns
+        $display("T=270: Checking per-core results (distinct programs)..."); // 20ns + 250ns
         
         // --- Check Core 0's result ---
         // Path: tb -> dut -> core0 -> decode_stage -> rf -> registers
@@ -63,16 +63,30 @@ module multicore_tb;
         ins_loaded = dut.core0.if_id.id_instruction_out;
         
         if (core0_x3 == 15)
-            $display("Core 0 PASSED! (x3 = %d)", core0_x3);
+            $display("Core 0 PASSED! (x3 = %0d, program0.txt)", core0_x3);
         else
-            $display("Core 0 FAILED! (x3 = %d, expected 15)", core0_x3);
+            $display("Core 0 FAILED! (x3 = %0d, expected 15)", core0_x3);
 
         // --- Check Core 1's result ---
         core1_x3 = dut.core1.decode_stage.rf.registers[3];
         if (core1_x3 == 27)
-            $display("Core 1 PASSED! (x3 = %d)", core1_x3);
+            $display("Core 1 PASSED! (x3 = %0d, program1.txt)", core1_x3);
         else
-            $display("Core 1 FAILED! (x3 = %d, expected 27)", core1_x3);
+            $display("Core 1 FAILED! (x3 = %0d, expected 27)", core1_x3);
+
+        // --- Check Core 2's result ---
+        core2_x3 = dut.core2.decode_stage.rf.registers[3];
+        if (core2_x3 == 7)
+            $display("Core 2 PASSED! (x3 = %0d, program2.txt)", core2_x3);
+        else
+            $display("Core 2 FAILED! (x3 = %0d, expected 7)", core2_x3);
+
+        // --- Check Core 3's result ---
+        core3_x3 = dut.core3.decode_stage.rf.registers[3];
+        if (core3_x3 == 42)
+            $display("Core 3 PASSED! (x3 = %0d, program3.txt)", core3_x3);
+        else
+            $display("Core 3 FAILED! (x3 = %0d, expected 42)", core3_x3);
 
         $display("Simulation finished.");
         $finish;

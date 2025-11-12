@@ -19,6 +19,8 @@ Using Make (recommended):
 1. Build, run simulation, and open waveform
    - `make`
    - This compiles to `processor.vvp`, runs it with `vvp`, and opens `waveform.vcd` in GTKWave.
+   - You should see PASS lines for each core showing independent programs:
+     - Core 0: x3=15, Core 1: x3=27, Core 2: x3=7, Core 3: x3=42
 
 2. Clean artifacts
    - `make clean`
@@ -80,11 +82,19 @@ Each core’s instruction memory is a ROM initialized from a hex file:
 - Core 2 → `program2.txt`
 - Core 3 → `program3.txt`
 
+Built-in demo programs and expected results (checked by the testbench):
+- Core 0: computes x3 = 15 (addi/add sequence)
+- Core 1: computes x3 = 27 (addi/add sequence)
+- Core 2: computes x3 = 7  (addi/add sequence)
+- Core 3: computes x3 = 42 (addi/add sequence)
+
 Format
 - `$readmemh` expects one 32‑bit hex word per line (no `0x` prefix).
-- Example:
+- Example words:
   - `00000013`  (ADDI x0, x0, 0 => NOP)
-  - `00500113`  (ADDI x2, x0, 5)
+  - `00500093`  (ADDI x1, x0, 5)
+  - `00A00113`  (ADDI x2, x0, 10)
+  - `002081B3`  (ADD  x3, x1, x2)
 - If a file has fewer than MEM_SIZE lines, the remaining ROM locations default to 0.
 
 Changing programs
