@@ -98,4 +98,3 @@ Changing programs
 - The testbench checks a couple of registers as a quick sanity test; expand as needed.
 
 ## License
-MIT (or your chosen license).
