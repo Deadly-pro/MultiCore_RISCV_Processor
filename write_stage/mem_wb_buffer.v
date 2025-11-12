@@ -13,6 +13,7 @@
         // Control signals
         input  wire        mem_reg_write_in,
         input  wire        mem_mem_to_reg_in,
+        input  wire        mem_write_from_pc_in,
     
         // --- Outputs to WB Stage (Feedback loop) ---
         output reg  [31:0] wb_alu_result_out,
@@ -22,7 +23,8 @@
         
         // Control signals
         output reg         wb_reg_write_out,
-        output reg         wb_mem_to_reg_out
+        output reg         wb_mem_to_reg_out,
+        output reg         wb_write_from_pc_out
     );
     
         always @(posedge clk or posedge rst) begin
@@ -33,6 +35,7 @@
                 wb_pc_plus_4_out  <= 32'b0;
                 wb_reg_write_out  <= 1'b0; // 0 = No write
                 wb_mem_to_reg_out <= 1'b0; // Default to 0
+                wb_write_from_pc_out <= 1'b0;
             end else begin
                 // Normal operation: capture all inputs
                 wb_alu_result_out <= mem_alu_result_in;
@@ -41,6 +44,7 @@
                 wb_pc_plus_4_out  <= mem_pc_plus_4_in;
                 wb_reg_write_out  <= mem_reg_write_in;
                 wb_mem_to_reg_out <= mem_mem_to_reg_in;
+                wb_write_from_pc_out <= mem_write_from_pc_in;
             end
         end
     

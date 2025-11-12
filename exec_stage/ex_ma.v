@@ -17,6 +17,7 @@ module ex_ma_buffer (
     input  wire        ex_reg_write_in,
     input  wire        ex_mem_to_reg_in,
     input  wire        ex_branch_in, // This port is no longer needed here
+    input  wire        ex_write_from_pc_in,
 
     // --- Outputs to MEM Stage ---
     output reg  [31:0] ma_pc_plus_4_out,
@@ -28,7 +29,8 @@ module ex_ma_buffer (
     output reg         ma_mem_read_out,
     output reg         ma_mem_write_out,
     output reg         ma_reg_write_out,
-    output reg         ma_mem_to_reg_out
+    output reg         ma_mem_to_reg_out,
+    output reg         ma_write_from_pc_out
     // ma_branch_out is removed as it's not needed
 );
 
@@ -42,6 +44,7 @@ module ex_ma_buffer (
             ma_mem_write_out  <= 1'b0;
             ma_reg_write_out  <= 1'b0;
             ma_mem_to_reg_out <= 1'b0;
+            ma_write_from_pc_out <= 1'b0;
         end else begin
             // Normal operation
             ma_pc_plus_4_out  <= ex_pc_plus_4_in;
@@ -52,6 +55,7 @@ module ex_ma_buffer (
             ma_mem_write_out  <= ex_mem_write_in;
             ma_reg_write_out  <= ex_reg_write_in;
             ma_mem_to_reg_out <= ex_mem_to_reg_in;
+            ma_write_from_pc_out <= ex_write_from_pc_in;
         end
     end
 

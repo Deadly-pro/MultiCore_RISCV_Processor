@@ -66,7 +66,7 @@
             .clk(clk),
             .rst(rst),
             .pipeline_stall(pipeline_stall),
-            .if_instruction_in(imem_data_in), // Data from external port
+            .if_instruction_in(if_instruction_in), // Use fetch-stage output
             .if_pc_plus_4_in(pc_plus_4),
             .if_pc_in(curr_pc),
             .id_instruction_out(id_instruction_in),
@@ -93,6 +93,7 @@
         wire        id_alu_src_out;
         wire        id_branch_out;
         wire [3:0]  id_alu_ctrl_out;
+        wire        id_write_from_pc_out;
         
         // Feedback signals for Hazard/WB
         wire [4:0]  ex_rd_feedback;
@@ -128,7 +129,8 @@
             .id_mem_to_reg_out(id_mem_to_reg_out),
             .id_alu_src_out(id_alu_src_out),
             .id_branch_out(id_branch_out),
-            .id_alu_ctrl_out(id_alu_ctrl_out)
+            .id_alu_ctrl_out(id_alu_ctrl_out),
+            .id_write_from_pc_out(id_write_from_pc_out)
         );
 
         // -------------------------------------------------------------------------
@@ -150,6 +152,7 @@
         wire        ex_alu_src_in;
         wire        ex_branch_in;
         wire [3:0]  ex_alu_ctrl_in;
+        wire        ex_write_from_pc_in;
 
         id_ex_buffer id_ex (
             .clk(clk),
@@ -171,6 +174,7 @@
             .id_ALUSrc_in(id_alu_src_out),
             .id_Branch_in(id_branch_out),
             .id_ALUCtrl_in(id_alu_ctrl_out),
+            .id_WriteFromPC_in(id_write_from_pc_out),
             .ex_pc_plus_4_out(ex_pc_plus_4_in),
             .ex_pc_out(ex_pc_in),
             .ex_read_data1_out(ex_read_data1_in),
@@ -186,7 +190,8 @@
             .ex_MemToReg_out(ex_mem_to_reg_in),
             .ex_ALUSrc_out(ex_alu_src_in),
             .ex_Branch_out(ex_branch_in),
-            .ex_ALUCtrl_out(ex_alu_ctrl_in)
+            .ex_ALUCtrl_out(ex_alu_ctrl_in),
+            .ex_WriteFromPC_out(ex_write_from_pc_in)
         );
 
         // -------------------------------------------------------------------------
@@ -200,6 +205,7 @@
         wire        ex_mem_write_out;
         wire        ex_reg_write_out;
         wire        ex_mem_to_reg_out;
+        wire        ex_write_from_pc_out;
         
         // --- NEW: Wires for Forwarding Unit ---
         wire [1:0]  forward_a;
@@ -230,6 +236,7 @@
             .id_branch_in(ex_branch_in),
             .id_alu_src_in(ex_alu_src_in),
             .id_alu_ctrl_in(ex_alu_ctrl_in),
+            .id_write_from_pc_in(ex_write_from_pc_in),
             .ex_pc_plus_4_out(ex_pc_plus_4_out),
             .ex_alu_result_out(ex_alu_result_out),
             .ex_read_data2_out(ex_read_data2_out),
@@ -238,6 +245,7 @@
             .ex_mem_write_out(ex_mem_write_out),
             .ex_reg_write_out(ex_reg_write_out),
             .ex_mem_to_reg_out(ex_mem_to_reg_out),
+            .ex_write_from_pc_out(ex_write_from_pc_out),
             .ex_branch_taken_out(branch_taken),
             .ex_branch_target_out(branch_target)
         );
@@ -253,6 +261,7 @@
         wire        ma_mem_write_out;
         wire        ma_reg_write_out;
         wire        ma_mem_to_reg_out;
+        wire        ma_write_from_pc_out;
 
         ex_ma_buffer ex_ma (
             .clk(clk),
@@ -266,6 +275,7 @@
             .ex_reg_write_in(ex_reg_write_out),
             .ex_mem_to_reg_in(ex_mem_to_reg_out),
             .ex_branch_in(1'b0), // Branch is handled in EX
+            .ex_write_from_pc_in(ex_write_from_pc_out),
             .ma_pc_plus_4_out(ma_pc_plus_4_out),
             .ma_alu_result_out(ma_alu_result_out),
             .ma_write_data_out(ma_write_data_out),
@@ -273,7 +283,8 @@
             .ma_mem_read_out(ma_mem_read_out),
             .ma_mem_write_out(ma_mem_write_out),
             .ma_reg_write_out(ma_reg_write_out),
-            .ma_mem_to_reg_out(ma_mem_to_reg_out)
+            .ma_mem_to_reg_out(ma_mem_to_reg_out),
+            .ma_write_from_pc_out(ma_write_from_pc_out)
         );
 
         // --- Feedback for Hazard Unit ---
@@ -289,6 +300,7 @@
         wire [31:0] mem_pc_plus_4_to_wb;
         wire        mem_reg_write_to_wb;
         wire        mem_mem_to_reg_to_wb;
+        wire        mem_write_from_pc_to_wb;
 
         ins_mem mem_stage (
             .clk(clk),
@@ -301,6 +313,7 @@
             .mem_write_in(ma_mem_write_out),
             .reg_write_in(ma_reg_write_out),
             .mem_to_reg_in(ma_mem_to_reg_out),
+            .write_from_pc_in(ma_write_from_pc_out),
             
             // Connect to Data Memory Ports
             .mem_read_data_in(dmem_read_data_in),
@@ -315,7 +328,8 @@
             .rd_addr_out(mem_rd_addr_to_wb),
             .pc_plus_4_out(mem_pc_plus_4_to_wb),
             .reg_write_out(mem_reg_write_to_wb),
-            .mem_to_reg_out(mem_mem_to_reg_to_wb)
+            .mem_to_reg_out(mem_mem_to_reg_to_wb),
+            .write_from_pc_out(mem_write_from_pc_to_wb)
         );
             
         // -------------------------------------------------------------------------
@@ -327,6 +341,7 @@
         wire [31:0] wb_pc_plus_4_in;
         wire        wb_reg_write_in;
         wire        wb_mem_to_reg_in;
+        wire        wb_write_from_pc_in;
 
         mem_wb_buffer mem_wb (
             .clk(clk),
@@ -337,12 +352,14 @@
             .mem_pc_plus_4_in(mem_pc_plus_4_to_wb),
             .mem_reg_write_in(mem_reg_write_to_wb),
             .mem_mem_to_reg_in(mem_mem_to_reg_to_wb),
+            .mem_write_from_pc_in(mem_write_from_pc_to_wb),
             .wb_alu_result_out(wb_alu_result_in),
             .wb_read_data_out(wb_read_data_in),
             .wb_rd_addr_out(wb_rd_addr_in),
             .wb_pc_plus_4_out(wb_pc_plus_4_in),
             .wb_reg_write_out(wb_reg_write_in),
-            .wb_mem_to_reg_out(wb_mem_to_reg_in)
+            .wb_mem_to_reg_out(wb_mem_to_reg_in),
+            .wb_write_from_pc_out(wb_write_from_pc_in)
         );
 
         // -------------------------------------------------------------------------
@@ -360,6 +377,7 @@
             .rd_addr_in(wb_rd_addr_in),
             .reg_write_in(wb_reg_write_in),
             .mem_to_reg_in(wb_mem_to_reg_in),
+            .write_from_pc_in(wb_write_from_pc_in),
             
             .wb_write_data_out(wb_write_data_feedback),
             .wb_rd_addr_out(wb_rd_feedback),

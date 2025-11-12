@@ -45,4 +45,4 @@ $(OUTPUT_EXE): $(TESTBENCH_FILE) $(VERILOG_FILES)
 # Clean rule: 'make clean' to remove old files
 clean:
 	@echo "Cleaning up old files..."
-	rm -f $(OUTPUT_EXE) $(WAVEFORM_FILE)
+	-del $(OUTPUT_EXE) $(WAVEFORM_FILE)

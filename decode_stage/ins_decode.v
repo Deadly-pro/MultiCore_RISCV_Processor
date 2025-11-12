@@ -36,7 +36,8 @@ module ins_decode(
     output wire        id_mem_to_reg_out,
     output wire        id_alu_src_out,
     output wire        id_branch_out,
-    output wire [3:0]  id_alu_ctrl_out
+    output wire [3:0]  id_alu_ctrl_out,
+    output wire        id_write_from_pc_out
 );
 
     // --- Instruction Field Parsing ---
@@ -57,6 +58,7 @@ module ins_decode(
     wire        ctrl_alu_src;
     wire        ctrl_branch;
     wire [3:0]  ctrl_alu_ctrl;
+    wire        ctrl_write_from_pc;
 
     // --- 1. Register File ---
     reg_file rf (
@@ -86,7 +88,8 @@ module ins_decode(
         .MemToReg(ctrl_mem_to_reg),
         .ALUSrc(ctrl_alu_src),
         .Branch(ctrl_branch),
-        .ALUCtrl(ctrl_alu_ctrl)
+        .ALUCtrl(ctrl_alu_ctrl),
+        .WriteFromPC(ctrl_write_from_pc)
     );
 
     // --- 4. Hazard Unit ---
@@ -110,12 +113,13 @@ module ins_decode(
     assign id_instruction_out = id_instruction_in; // For debug
 
     // If stalled, we must output all-zeros (a bubble)
-    assign id_mem_read_out   = (pipeline_stall) ? 1'b0 : ctrl_mem_read;
-    assign id_mem_write_out  = (pipeline_stall) ? 1'b0 : ctrl_mem_write;
-    assign id_reg_write_out  = (pipeline_stall) ? 1'b0 : ctrl_reg_write;
-    assign id_mem_to_reg_out = (pipeline_stall) ? 1'b0 : ctrl_mem_to_reg;
-    assign id_alu_src_out    = (pipeline_stall) ? 1'b0 : ctrl_alu_src;
-    assign id_branch_out     = (pipeline_stall) ? 1'b0 : ctrl_branch;
-    assign id_alu_ctrl_out   = (pipeline_stall) ? 4'hF : ctrl_alu_ctrl; // 4'hF = NOP
+    assign id_mem_read_out      = (pipeline_stall_out) ? 1'b0 : ctrl_mem_read;
+    assign id_mem_write_out     = (pipeline_stall_out) ? 1'b0 : ctrl_mem_write;
+    assign id_reg_write_out     = (pipeline_stall_out) ? 1'b0 : ctrl_reg_write;
+    assign id_mem_to_reg_out    = (pipeline_stall_out) ? 1'b0 : ctrl_mem_to_reg;
+    assign id_alu_src_out       = (pipeline_stall_out) ? 1'b0 : ctrl_alu_src;
+    assign id_branch_out        = (pipeline_stall_out) ? 1'b0 : ctrl_branch;
+    assign id_alu_ctrl_out      = (pipeline_stall_out) ? 4'hF : ctrl_alu_ctrl; // 4'hF = NOP
+    assign id_write_from_pc_out = (pipeline_stall_out) ? 1'b0 : ctrl_write_from_pc;
 
 endmodule

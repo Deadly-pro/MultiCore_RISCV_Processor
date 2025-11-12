@@ -18,6 +18,7 @@ module ins_mem (
     input  wire        mem_write_in,
     input  wire        reg_write_in,
     input  wire        mem_to_reg_in,
+    input  wire        write_from_pc_in,
 
     // --- Interface to Data Memory (External) ---
     input  wire [31:0] mem_read_data_in,   // Data from dmem
@@ -32,7 +33,8 @@ module ins_mem (
     output reg  [4:0]  rd_addr_out,
     output reg  [31:0] pc_plus_4_out,
     output reg         reg_write_out,
-    output reg         mem_to_reg_out
+    output reg         mem_to_reg_out,
+    output reg         write_from_pc_out
 );
 
     // This is a sequential stage, so we register all signals.
@@ -49,6 +51,7 @@ module ins_mem (
             pc_plus_4_out      <= 32'b0;
             reg_write_out      <= 1'b0;
             mem_to_reg_out     <= 1'b0;
+            write_from_pc_out  <= 1'b0;
         end else begin
             // --- 1. Connect to data_memory ---
             mem_address_out    <= alu_result_in;  // ALU result is the address
@@ -63,6 +66,7 @@ module ins_mem (
             pc_plus_4_out      <= pc_plus_4_in;
             reg_write_out      <= reg_write_in;
             mem_to_reg_out     <= mem_to_reg_in;
+            write_from_pc_out  <= write_from_pc_in;
         end
     end
     

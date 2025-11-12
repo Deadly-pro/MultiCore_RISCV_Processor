@@ -29,6 +29,7 @@ module ins_ex (
     input  wire        id_branch_in,
     input  wire        id_alu_src_in,
     input  wire [3:0]  id_alu_ctrl_in,
+    input  wire        id_write_from_pc_in,
 
     // --- Outputs (to be latched in EX/MEM register) ---
     output reg  [31:0] ex_pc_plus_4_out,
@@ -38,7 +39,8 @@ module ins_ex (
     output reg         ex_mem_read_out,
     output reg         ex_mem_write_out,
     output reg         ex_reg_write_out,
-    output reg         ex_mem_to_reg_out, // <-- This is [1:0]
+    output reg         ex_mem_to_reg_out,
+    output reg         ex_write_from_pc_out,
 
     // --- Branch Outputs (to PC control) ---
     output reg         ex_branch_taken_out,
@@ -109,7 +111,8 @@ module ins_ex (
             ex_mem_read_out    <= 1'b0;
             ex_mem_write_out   <= 1'b0;
             ex_reg_write_out   <= 1'b0;
-            ex_mem_to_reg_out  <= 2'b0; // <-- Fixed to 2 bits
+            ex_mem_to_reg_out  <= 1'b0;
+            ex_write_from_pc_out <= 1'b0;
             
             // Clear branch outputs
             ex_branch_taken_out  <= 1'b0;
@@ -126,11 +129,19 @@ module ins_ex (
             ex_mem_read_out    <= id_mem_read_in;
             ex_mem_write_out   <= id_mem_write_in;
             ex_reg_write_out   <= id_reg_write_in;
-            ex_mem_to_reg_out  <= id_mem_to_reg_in; // <-- Fixed to pass 2 bits
+            ex_mem_to_reg_out  <= id_mem_to_reg_in;
+            ex_write_from_pc_out <= id_write_from_pc_in;
             
             // --- FIX: Register the branch signals ---
             ex_branch_taken_out  <= branch_taken_comb;
             ex_branch_target_out <= branch_target_comb;
+        end
+    end
+
+    // Debug: Log when performing a register-register ADD to rd==x3
+    always @(posedge clk) begin
+        if (!rst && id_alu_ctrl_in == 4'h0 && id_alu_src_in == 1'b0 && id_rd_addr_in == 5'd3) begin
+            $display("[EX dbg] t=%0t A=%0d B=%0d (rs2=%0d imm=%0d sel=%0b fwd_b=%0b) -> result=%0d", $time, fwd_data_a, alu_mux_out_b, id_read_data2_in, id_immediate_in, id_alu_src_in, forward_b_in, alu_result);
         end
     end
 

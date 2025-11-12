@@ -50,6 +50,17 @@ module mem_controller (
     reg [31:0] mem_bank_2 [0:1023];
     reg [31:0] mem_bank_3 [0:1023];
 
+    // Initialize banks to zero for clean simulation
+    integer i;
+    initial begin
+        for (i = 0; i < 1024; i = i + 1) begin
+            mem_bank_0[i] = 32'b0;
+            mem_bank_1[i] = 32'b0;
+            mem_bank_2[i] = 32'b0;
+            mem_bank_3[i] = 32'b0;
+        end
+    end
+
     // Each core's address (0-4095) is indexed
     // by word (bits 11:2) for word based addresing last two bits arent needed
     wire [9:0] core0_word_addr = core0_address[11:2];

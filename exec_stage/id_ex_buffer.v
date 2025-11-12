@@ -25,6 +25,7 @@ module id_ex_buffer(
     input  wire        id_ALUSrc_in,
     input  wire        id_Branch_in,
     input  wire [3:0]  id_ALUCtrl_in,
+    input  wire        id_WriteFromPC_in,
 
     // --- Outputs to EX Stage ---
     output reg  [31:0] ex_pc_plus_4_out,
@@ -44,7 +45,8 @@ module id_ex_buffer(
     output reg         ex_MemToReg_out,
     output reg         ex_ALUSrc_out,
     output reg         ex_Branch_out,
-    output reg  [3:0]  ex_ALUCtrl_out
+    output reg  [3:0]  ex_ALUCtrl_out,
+    output reg         ex_WriteFromPC_out
 );
 
     always @(posedge clk or posedge rst) begin
@@ -66,6 +68,7 @@ module id_ex_buffer(
             ex_ALUSrc_out     <= 1'b0;
             ex_Branch_out     <= 1'b0;
             ex_ALUCtrl_out    <= 4'hF; // NOP
+            ex_WriteFromPC_out <= 1'b0;
           end 
         else if (pipeline_stall) begin
             // Insert NOP (Bubble)
@@ -85,6 +88,7 @@ module id_ex_buffer(
             ex_ALUSrc_out     <= 1'b0;
             ex_Branch_out     <= 1'b0;
             ex_ALUCtrl_out    <= 4'hF; // NOP
+            ex_WriteFromPC_out <= 1'b0;
         end else begin
             // Normal: capture inputs from ID stage
             ex_pc_plus_4_out  <= id_pc_plus_4_in;
@@ -103,6 +107,7 @@ module id_ex_buffer(
             ex_ALUSrc_out     <= id_ALUSrc_in;
             ex_Branch_out     <= id_Branch_in;
             ex_ALUCtrl_out    <= id_ALUCtrl_in;
+            ex_WriteFromPC_out <= id_WriteFromPC_in;
         end
     end
 
