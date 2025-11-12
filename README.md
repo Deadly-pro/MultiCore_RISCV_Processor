@@ -71,7 +71,6 @@ Writeback stage
 - `write_stage/ins_wb.v` — Writeback mux and feedback signals.
 
 Other
-- `data_mem.v` — Legacy single‑bank data memory (from single‑core variant).
 - `program0.txt`..`program3.txt` — Hex program files for cores 0–3.
 - `Makefile` — Windows‑friendly build script using iverilog/vvp/gtkwave.
 
@@ -108,4 +107,3 @@ Changing programs
 - The testbench checks a couple of registers as a quick sanity test; expand as needed.
 
 ## License
-MIT (or your chosen license).
