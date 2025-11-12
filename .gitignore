@@ -1,2 +1,4 @@
 waveform.vcd
 waveform.vcd
+*.vvp
+*.vcd
