@@ -1,6 +1,6 @@
 # MultiCore RISC‑V Processor (RV32I)
 
-A simple multi-core RISC‑V (RV32I) processor built from a classic 5‑stage pipeline (IF, ID, EX, MEM, WB) with basic hazard detection and data forwarding. The top-level integrates 4 cores, per‑core instruction memories, and a 4‑bank data memory so each core has its own bank.
+A simple multi-core RISC‑V (RV32I) processor built from a classic 5‑stage pipeline (IF, ID, EX, MEM, WB) with basic hazard detection and data forwarding. The top-level integrates 4 cores, per‑core instruction memories, and a 4‑bank data memory so each core has its own bank. The goal of this implementation is to get a better understanding of a Multi-Core Implementation of a RISC V Processor. One can use this repo as refference to get a better understanding of the topic or to try out other optimizations / extensions onto a RISC V Core, and so on. 
 
 ## Prerequisites
 - Icarus Verilog (iverilog, vvp)
@@ -20,7 +20,10 @@ Using Make (recommended):
    - `make`
    - This compiles to `processor.vvp`, runs it with `vvp`, and opens `waveform.vcd` in GTKWave.
    - You should see PASS lines for each core showing independent programs:
-     - Core 0: x3=15, Core 1: x3=27, Core 2: x3=7, Core 3: x3=42
+     - Core 0: x3=15, 
+       Core 1: x3=27, 
+       Core 2: x3=7, 
+       Core 3: x3=42
 
 2. Clean artifacts
    - `make clean`
