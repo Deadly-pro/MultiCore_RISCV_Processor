@@ -1,14 +1,19 @@
-// -----------------------------------------------------------------------------
-// File: exec_stage/ex_alu_src_mux.v
-// Purpose: Select second ALU operand between rs2 and immediate based on ALUSrc.
-// -----------------------------------------------------------------------------
-module ALU_SRC_MUX (
-    input  wire [31:0] rs2,
-    input  wire [31:0] imm,
-    input  wire        alu_src,
-    output wire [31:0] mux_out
+// Multiplexer for ALU source B.
+`timescale 1ns / 1ps
+
+module ex_alu_src_mux (
+    input  wire [31:0] read_data2_in,
+    input  wire [31:0] immediate_in,
+    input  wire        alu_src_sel_in,
+    output reg  [31:0] alu_op_b_out
 );
 
-assign mux_out = (alu_src) ? imm : rs2;
+    always @(*) begin
+        case (alu_src_sel_in)
+            1'b0: alu_op_b_out = read_data2_in;
+            1'b1: alu_op_b_out = immediate_in;
+            default: alu_op_b_out = read_data2_in;
+        endcase
+    end
 
 endmodule

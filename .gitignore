@@ -1,4 +1,6 @@
-waveform.vcd
-waveform.vcd
+*waveform.vcd
 *.vvp
 *.vcd
+simv
+*Makefile
+*.log

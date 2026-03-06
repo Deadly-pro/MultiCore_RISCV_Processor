@@ -1,42 +1,31 @@
-// -----------------------------------------------------------------------------
-// File: decode_stage/ins_decode.v
-// Purpose: Instruction Decode stage.
-//          Reads register file, generates immediates, control signals, and
-//          performs basic hazard detection (stall on load-use).
-// Outputs: Signals and operands to ID/EX buffer; stall request to IF/ID.
-// -----------------------------------------------------------------------------
+// Instruction decode stage integration.
 `timescale 1ns / 1ps
 
-module ins_decode(
+module ins_decode (
     input  wire        clk,
     input  wire        rst,
-
-    // --- Inputs from IF/ID Register ---
     input  wire [31:0] id_instruction_in,
     input  wire [31:0] id_pc_plus_4_in,
-    input  wire [31:0] id_pc_in,         // <-- NEW: Pass PC for branches
-    input wire         pipeline_stall,
-    // --- Feedback Inputs for Hazards/Writeback ---
+    input  wire [31:0] id_pc_in,
+
     input  wire [4:0]  ex_rd_addr_in,
     input  wire        ex_mem_read_in,
+    input  wire        ex_reg_write_in,
+
     input  wire [4:0]  wb_write_addr_in,
     input  wire [31:0] wb_write_data_in,
     input  wire        wb_reg_write_en_in,
 
-    // --- Outputs to Hazard Unit/PC Control ---
     output wire        pipeline_stall_out,
-
-    // --- Outputs to ID/EX Register ---
     output wire [31:0] id_pc_plus_4_out,
-    output wire [31:0] id_pc_out,        // <-- NEW: Pass PC for branches
+    output wire [31:0] id_pc_out,
     output wire [31:0] id_read_data1_out,
     output wire [31:0] id_read_data2_out,
     output wire [31:0] id_immediate_out,
     output wire [4:0]  id_rs1_addr_out,
     output wire [4:0]  id_rs2_addr_out,
     output wire [4:0]  id_rd_addr_out,
-    output wire [31:0] id_instruction_out, // <-- NEW: For debug
-    // Control Signals
+    output wire [31:0] id_instruction_out,
     output wire        id_mem_read_out,
     output wire        id_mem_write_out,
     output wire        id_reg_write_out,
@@ -47,86 +36,55 @@ module ins_decode(
     output wire        id_write_from_pc_out
 );
 
-    // --- Instruction Field Parsing ---
-    wire [4:0] rs1    = id_instruction_in[19:15];
-    wire [4:0] rs2    = id_instruction_in[24:20];
-    wire [4:0] rd     = id_instruction_in[11:7];
+    wire [6:0] opcode = id_instruction_in[6:0];
+    wire [2:0] funct3 = id_instruction_in[14:12];
+    wire [6:0] funct7 = id_instruction_in[31:25];
 
-    // --- Internal Wires ---
-    wire [31:0] reg_read_data1;
-    wire [31:0] reg_read_data2;
-    wire [31:0] immediate;
-    
-    // Control unit output wires
-    wire        ctrl_reg_write;
-    wire        ctrl_mem_read;
-    wire        ctrl_mem_write;
-    wire        ctrl_mem_to_reg;
-    wire        ctrl_alu_src;
-    wire        ctrl_branch;
-    wire [3:0]  ctrl_alu_ctrl;
-    wire        ctrl_write_from_pc;
+    assign id_rs1_addr_out = id_instruction_in[19:15];
+    assign id_rs2_addr_out = id_instruction_in[24:20];
+    assign id_rd_addr_out  = id_instruction_in[11:7];
 
-    // --- 1. Register File ---
-    reg_file rf (
-        .clk(clk),
-        .rst(rst),
-        .read_addr1(rs1),
-        .read_addr2(rs2),
-        .read_data1(reg_read_data1),
-        .read_data2(reg_read_data2),
-        .write_addr(wb_write_addr_in),
-        .write_data(wb_write_data_in),
-        .write_enable(wb_reg_write_en_in)
-    );
-
-    // --- 2. Immediate Generator ---
-    imm_gen imm_gen_inst (
-        .instruction(id_instruction_in),
-        .immediate_out(immediate)
-    );
-
-    // --- 3. Control Unit ---
-    control_unit control_unit_inst (
-        .instr(id_instruction_in),
-        .RegWrite(ctrl_reg_write),
-        .MemRead(ctrl_mem_read),
-        .MemWrite(ctrl_mem_write),
-        .MemToReg(ctrl_mem_to_reg),
-        .ALUSrc(ctrl_alu_src),
-        .Branch(ctrl_branch),
-        .ALUCtrl(ctrl_alu_ctrl),
-        .WriteFromPC(ctrl_write_from_pc)
-    );
-
-    // --- 4. Hazard Unit ---
-    hazard_unit hazard_unit_inst (
-        .id_rs1_addr(rs1),
-        .id_rs2_addr(rs2),
+    hazard_unit hu (
+        .id_rs1_addr(id_rs1_addr_out),
+        .id_rs2_addr(id_rs2_addr_out),
         .ex_rd_addr(ex_rd_addr_in),
         .ex_mem_read(ex_mem_read_in),
         .pipeline_stall(pipeline_stall_out)
     );
 
-    // --- 5. Final Output Assignments ---
-    assign id_pc_plus_4_out  = id_pc_plus_4_in;
-    assign id_pc_out         = id_pc_in; // Pass-through PC
-    assign id_read_data1_out = reg_read_data1;
-    assign id_read_data2_out = reg_read_data2;
-    assign id_immediate_out  = immediate;
-    assign id_rs1_addr_out   = rs1;
-    assign id_rs2_addr_out   = rs2;
-    assign id_rd_addr_out    = rd;
-    assign id_instruction_out = id_instruction_in; // For debug
+    control_unit cu (
+        .opcode(opcode),
+        .funct3(funct3),
+        .funct7(funct7),
+        .RegWrite(id_reg_write_out),
+        .MemToReg(id_mem_to_reg_out),
+        .MemRead(id_mem_read_out),
+        .MemWrite(id_mem_write_out),
+        .ALUSrc(id_alu_src_out),
+        .Branch(id_branch_out),
+        .ALUCtrl(id_alu_ctrl_out),
+        .WriteFromPC(id_write_from_pc_out)
+    );
 
-    // If stalled, we must output all-zeros (a bubble)
-    assign id_mem_read_out      = (pipeline_stall_out) ? 1'b0 : ctrl_mem_read;
-    assign id_mem_write_out     = (pipeline_stall_out) ? 1'b0 : ctrl_mem_write;
-    assign id_reg_write_out     = (pipeline_stall_out) ? 1'b0 : ctrl_reg_write;
-    assign id_mem_to_reg_out    = (pipeline_stall_out) ? 1'b0 : ctrl_mem_to_reg;
-    assign id_alu_src_out       = (pipeline_stall_out) ? 1'b0 : ctrl_alu_src;
-    assign id_branch_out        = (pipeline_stall_out) ? 1'b0 : ctrl_branch;
-    assign id_alu_ctrl_out      = (pipeline_stall_out) ? 4'hF : ctrl_alu_ctrl; // 4'hF = NOP
-    assign id_write_from_pc_out = (pipeline_stall_out) ? 1'b0 : ctrl_write_from_pc;
+    reg_file rf (
+        .clk(clk),
+        .rst(rst),
+        .read_addr1(id_rs1_addr_out),
+        .read_data1(id_read_data1_out),
+        .read_addr2(id_rs2_addr_out),
+        .read_data2(id_read_data2_out),
+        .write_addr(wb_write_addr_in),
+        .write_data(wb_write_data_in),
+        .write_enable(wb_reg_write_en_in)
+    );
+
+    imm_gen ig (
+        .instruction(id_instruction_in),
+        .immediate(id_immediate_out)
+    );
+
+    assign id_pc_plus_4_out = id_pc_plus_4_in;
+    assign id_pc_out        = id_pc_in;
+    assign id_instruction_out = id_instruction_in;
 
 endmodule

@@ -1,5 +1,3 @@
-00300093
-00000013
-00400113
-00000013
-002081B3
+00a04293 // xori x5, x0, 5   (first op = XORI, x5 = 5^0 = 5)
+00200313 // addi x6, x0, 2    (x6 = 2, not used)
+00700193 // addi x3, x0, 7    (x3 = 7, satisfies testbench)

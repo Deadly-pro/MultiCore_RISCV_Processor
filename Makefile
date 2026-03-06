@@ -1,48 +1,50 @@
-#
-# A Makefile to compile and run your processor with Icarus Verilog
-# This version is built for Windows and finds files in your subfolders.
-#
+# ==========================================
+# RISC-V Multicore Project Makefile
+# ==========================================
 
-# --- Configuration ---
-# --- FIX: Added './' prefix to match the wildcard output ---
-TESTBENCH_FILE = ./multicore_tb.v
-OUTPUT_EXE = processor.vvp
-WAVEFORM_FILE = waveform.vcd
+# 1. Automatic Source Discovery
+# This uses the Linux 'find' command to grab every .v file 
+# in the current directory (.) and all subdirectories.
+SRCS = $(shell find . -name "*.v")
 
-# --- Find all Verilog files ---
-# We list all the directories that contain Verilog source code,
-# based on your screenshot.
-VERILOG_DIRS := . \
-                decode_stage \
-                exec_stage \
-                fetch_stage \
-                mem_stage \
-                write_stage \
-                memory
+# 2. Output Configuration
+PROJ_NAME = processor
+DUMP_FILE = waveform.vcd
 
-# This command finds all .v files in those directories
-VERILOG_SOURCES := $(foreach dir,$(VERILOG_DIRS),$(wildcard $(dir)/*.v))
+# 3. Toolchain
+COMPILER = iverilog
+SIMULATOR = vvp
+VIEWER = gtkwave
 
-# This filter-out command will now correctly find and remove the testbench
-# from the main list, preventing the "already declared" error.
-VERILOG_FILES := $(filter-out $(TESTBENCH_FILE), $(VERILOG_SOURCES))
+# 4. Compilation Flags
+# -o: Output name
+# -g2012: Enables SystemVerilog features (optional but good)
+FLAGS = -o $(PROJ_NAME) -g2012
 
-# --- Rules ---
+# ==========================================
+# Targets
+# ==========================================
 
-# Default rule: 'make' or 'make all'
-all: $(OUTPUT_EXE)
-	@echo "Compilation successful. Running simulation..."
-	vvp $(OUTPUT_EXE)
-	@echo "Simulation finished. Opening waveform..."
-	gtkwave $(WAVEFORM_FILE)
+all: compile run
 
-# Compile rule: How to build the .vvp executable
-$(OUTPUT_EXE): $(TESTBENCH_FILE) $(VERILOG_FILES)
-	@echo "Compiling all Verilog files..."
-	@echo "Found files: $(VERILOG_FILES)"
-	iverilog -g2012 -o $(OUTPUT_EXE) $(TESTBENCH_FILE) $(VERILOG_FILES)
+# Compile: Feeds ALL found .v files to iverilog
+compile:
+	@echo "Compiling $(words $(SRCS)) source files..."
+	$(COMPILER) $(FLAGS) $(SRCS)
+	@echo "Compilation Successful! 💾"
 
-# Clean rule: 'make clean' to remove old files
+# Run: Executes the simulation
+run:
+	@echo "Running Simulation..."
+	$(SIMULATOR) $(PROJ_NAME)
+	@echo "Simulation Complete! 🚀"
+
+# View: Opens GTKWave
+wave:
+	@echo "Opening Waveforms..."
+	$(VIEWER) $(DUMP_FILE) &
+
+# Clean: Removes generated files
 clean:
-	@echo "Cleaning up old files..."
-	-del $(OUTPUT_EXE) $(WAVEFORM_FILE)
+	rm -f $(PROJ_NAME) $(DUMP_FILE)
+	@echo "Cleaned up. 🧹"
